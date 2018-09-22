@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var db *gorm.DB
@@ -21,6 +22,7 @@ type User struct {
 	City      string `json:"city"`
 	Username  string `json:"username"`
 	EmailID   string `json:"emailid"`
+	Password  string `json:"password"`
 	Points    uint   `json:"points"`
 	Role      uint   `json:"role"` // 1 for admin and 0 for user
 }
@@ -86,7 +88,7 @@ type Answer struct {
 func main() {
 	db, err = gorm.Open("sqlite3", "./gorm.db")
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	defer db.Close()
 
@@ -156,6 +158,8 @@ func main() {
 	// db.Create(&q20)
 
 	r := gin.Default()
+	r.POST("/signup", Signup)
+	r.POST("/signin", Signin)
 	// r.GET("/people/:id", GetUser)
 	// r.POST("/people", CreateUser)
 	// r.PUT("/people/:id", UpdateUser)
@@ -215,6 +219,46 @@ func main() {
 // 		c.JSON(200, user)
 // 	}
 // }
+
+//Signup user
+func Signup(c *gin.Context) {
+	var user User
+	c.BindJSON(&user)
+	var existinguser User
+	if err := db.Where("username = ?", user.Username).First(&existinguser).Error; err == nil {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(200, gin.H{user.Username: "already exists. Try another"})
+	} else {
+		user.Points = 0
+		user.Role = 0
+		hashedPwd, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+		user.Password = string(hashedPwd)
+		db.Create(&user)
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(200, user)
+	}
+}
+
+//Signin user
+func Signin(c *gin.Context) {
+	var user User
+	var existinguser User
+	c.BindJSON(&user)
+	if err := db.Where("username = ?", user.Username).First(&existinguser).Error; err != nil {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(200, gin.H{user.Username: "does not exist"})
+	} else {
+		if err = bcrypt.CompareHashAndPassword([]byte(existinguser.Password), []byte(user.Password)); err != nil {
+			c.Header("access-control-allow-origin", "*")
+			c.JSON(200, gin.H{user.Username: "incorrect password"})
+		} else {
+			c.Header("access-control-allow-origin", "*")
+			c.JSON(200, gin.H{user.Username: "logged in"})
+		}
+	}
+}
+
+// -----------------------------------------------------admin functions--------------------------------------------------------------//
 
 //GetPeople for admin
 func GetPeople(c *gin.Context) {
