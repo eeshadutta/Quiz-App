@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './DeletePerson.css';
+import './App.css';
 
 class DeletePerson extends Component {
   constructor() {
@@ -14,7 +14,7 @@ class DeletePerson extends Component {
   }
 
   componentDidMount() {
-    const request = new Request('http://127.0.0.1:8080/people/');
+    const request = new Request('http://127.0.0.1:8080/people/' + sessionStorage.getItem("username"));
     fetch(request)
       .then(response => response.json())
       .then(data => this.setState({ data: data }));
@@ -26,7 +26,7 @@ class DeletePerson extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch('http://127.0.0.1:8080/people/' + this.state.selectedOption, {
+    fetch('http://127.0.0.1:8080/people/' + sessionStorage.getItem("username") + this.state.selectedOption, {
       method: 'DELETE',
     })
       .then(response => {
@@ -52,6 +52,7 @@ class DeletePerson extends Component {
                 <th>ID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>Username</th>
                 <th>City</th>
               </tr>
             </thead>
@@ -62,6 +63,7 @@ class DeletePerson extends Component {
                   <td>{item.id}</td>
                   <td>{item.firstname}</td>
                   <td>{item.lastname}</td>
+                  <td>{item.username}</td>
                   <td>{item.city}</td>
                 </tr>
               )
