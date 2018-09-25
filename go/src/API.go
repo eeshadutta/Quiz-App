@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"sort"
+	"strconv"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -23,7 +25,7 @@ type User struct {
 	Username  string `json:"username"`
 	EmailID   string `json:"emailid"`
 	Password  string `json:"password"`
-	Points    uint   `json:"points"`
+	Points    uint64 `json:"points"`
 	Role      uint   `json:"role"` // 1 for admin and 0 for user
 }
 
@@ -46,6 +48,7 @@ type Quiz struct {
 type Question struct {
 	ID       uint   `json:"id"`
 	Question string `json:"question"`
+	Type     uint   `json:"type"` //1 for SCQ and 0 for MCQ
 	Op1      string `json:"op1"`
 	Op2      string `json:"op2"`
 	Op3      string `json:"op3"`
@@ -61,20 +64,21 @@ type Question struct {
 
 //Points model
 type Points struct {
-	ID         uint   `json:"id"`
-	Username   string `json:"username"`
-	Genre      string `json:"genre"`
-	Points     uint   `json:"points", gorm:"default:0"`
-	Cur_Points uint   `json:"cur_points", gorm:"default:0"`
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Genre    string `json:"genre"`
+	Points   uint64 `json:"points", gorm:"default:0"`
+	//Cur_Points uint   `json:"cur_points", gorm:"default:0"`
 }
 
 //History model
 type History struct {
-	ID       uint   `json:"id"`
-	Username string `json:"username"`
-	Genre    string `json:"genre"`
-	Quiz_Num uint   `json:"quiz_num"`
-	Score    uint   `json:"score"`
+	ID        uint   `json:"id"`
+	Username  string `json:"username"`
+	Genre     string `json:"genre"`
+	Quiz_Num  uint   `json:"quiz_num"`
+	Score     uint64 `json:"score"`
+	Timestamp string `json:"timestamp"`
 }
 
 //Answer received
@@ -99,11 +103,6 @@ func main() {
 	// db.Create(&g1)
 	// db.Create(&g2)
 
-	// u1 := User{Firstname: "Eesha", Lastname: "Dutta", Username: "ed", City: "Hyderabad", EmailID: "ed@gmail.com", Points: 0, Role: 1}
-	// db.Create(&u1)
-	// u2 := User{Firstname: "Indu", Lastname: "Dutta", Username: "indu", City: "Pune", EmailID: "in@gmail.com", Points: 0, Role: 0}
-	// db.Create(&u2)
-
 	// z1 := Quiz{Genre: "History", Quiz_Num: 1, Num_Questions: 5}
 	// db.Create(&z1)
 	// z2 := Quiz{Genre: "History", Quiz_Num: 2, Num_Questions: 5}
@@ -113,54 +112,54 @@ func main() {
 	// z4 := Quiz{Genre: "Science", Quiz_Num: 2, Num_Questions: 5}
 	// db.Create(&z4)
 
-	// q1 := Question{Question: "WW1 began in which year?", Op1: "1923", Op2: "1938", Op3: "1917", Op4: "1914", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1, Ques_Num: 1}
+	// q1 := Question{Question: "WW1 began in which year?", Type: 1, Op1: "1923", Op2: "1938", Op3: "1917", Op4: "1914", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1, Ques_Num: 1}
 	// db.Create(&q1)
-	// q2 := Question{Question: "Adolf Hitler was born in which country?", Op1: "France", Op2: "Germany", Op3: "Austria", Op4: "Hungary", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 1, Ques_Num: 2}
+	// q2 := Question{Question: "Adolf Hitler was born in which country?", Type: 1, Op1: "France", Op2: "Germany", Op3: "Austria", Op4: "Hungary", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 1, Ques_Num: 2}
 	// db.Create(&q2)
-	// q3 := Question{Question: "JFK was assassinated in", Op1: "New York", Op2: "Austin", Op3: "Dallas", Op4: "Miami", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1, Ques_Num: 3}
+	// q3 := Question{Question: "JFK was assassinated in", Op1: "New York", Type: 1, Op2: "Austin", Op3: "Dallas", Op4: "Miami", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1, Ques_Num: 3}
 	// db.Create(&q3)
-	// q4 := Question{Question: "Which of these are of Indian origin?", Op1: "Maulana Azad", Op2: "SC Bose", Op3: "Annie Besant", Op4: "Mahatma Gandhi", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1, Ques_Num: 4}
+	// q4 := Question{Question: "Which of these are of Indian origin?", Type: 0, Op1: "Maulana Azad", Op2: "SC Bose", Op3: "Annie Besant", Op4: "Mahatma Gandhi", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1, Ques_Num: 4}
 	// db.Create(&q4)
-	// q5 := Question{Question: "Which of these are Mughal emperors?", Op1: "Akbar", Op2: "Jengis Khan", Op3: "Shah Jahan", Op4: "Chandra Gupta Maurya", Ans1: true, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1, Ques_Num: 5}
+	// q5 := Question{Question: "Which of these are Mughal emperors?", Type: 0, Op1: "Akbar", Op2: "Jengis Khan", Op3: "Shah Jahan", Op4: "Chandra Gupta Maurya", Ans1: true, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1, Ques_Num: 5}
 	// db.Create(&q5)
 
-	// q6 := Question{Question: "Babar declared himself as an emperor first at", Op1: "Samarkand", Op2: "Farghana", Op3: "Kabul", Op4: "Panipat", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 2, Ques_Num: 1}
+	// q6 := Question{Question: "Babar declared himself as an emperor first at", Type: 1, Op1: "Samarkand", Op2: "Farghana", Op3: "Kabul", Op4: "Panipat", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 2, Ques_Num: 1}
 	// db.Create(&q6)
-	// q7 := Question{Question: "Which site of Harappan civilization is located in Haryana?", Op1: "Banawali", Op2: "Kalibanga", Op3: "Ropar", Op4: "Dhaulavira", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 2}
+	// q7 := Question{Question: "Which site of Harappan civilization is located in Haryana?", Type: 1, Op1: "Banawali", Op2: "Kalibanga", Op3: "Ropar", Op4: "Dhaulavira", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 2}
 	// db.Create(&q7)
-	// q8 := Question{Question: "Which of these were rulers of the maurya dynasty?", Op1: "ChandraGupta Maurya", Op2: "Bindusara", Op3: "Ashoka", Op4: "RudraGupta", Ans1: true, Ans2: true, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 3}
+	// q8 := Question{Question: "Which of these were rulers of the maurya dynasty?", Type: 0, Op1: "ChandraGupta Maurya", Op2: "Bindusara", Op3: "Ashoka", Op4: "RudraGupta", Ans1: true, Ans2: true, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 3}
 	// db.Create(&q8)
-	// q9 := Question{Question: "Alexander the Great was from which country?", Op1: "Turkey", Op2: "Macedonia", Op3: "Greece", Op4: "Morocco", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 4}
+	// q9 := Question{Question: "Alexander the Great was from which country?", Type: 1, Op1: "Turkey", Op2: "Macedonia", Op3: "Greece", Op4: "Morocco", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 4}
 	// db.Create(&q9)
-	// q10 := Question{Question: "Who was the founder of Lodhi dynasty?", Op1: "Sikandar Lodhi", Op2: "Bahlol Lodhi", Op3: "Ibrahim Lodhi", Op4: "Daulat Khan Lodhi", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 5}
+	// q10 := Question{Question: "Who was the founder of Lodhi dynasty?", Type: 1, Op1: "Sikandar Lodhi", Op2: "Bahlol Lodhi", Op3: "Ibrahim Lodhi", Op4: "Daulat Khan Lodhi", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2, Ques_Num: 5}
 	// db.Create(&q10)
 
-	// q11 := Question{Question: "Which of the following is not a primary contributor to the green house effect ? ", Op1: "Carbon Dioxide", Op2: "Carbon monoxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1, Ques_Num: 1}
+	// q11 := Question{Question: "Which of the following is not a primary contributor to the green house effect ? ", Type: 1, Op1: "Carbon Dioxide", Op2: "Carbon monoxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1, Ques_Num: 1}
 	// db.Create(&q11)
-	// q12 := Question{Question: "The depletion in the Ozone layer is caused by", Op1: "Nitrous oxide", Op2: "Carbon Dioxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1, Ques_Num: 2}
+	// q12 := Question{Question: "The depletion in the Ozone layer is caused by", Type: 1, Op1: "Nitrous oxide", Op2: "Carbon Dioxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1, Ques_Num: 2}
 	// db.Create(&q12)
-	// q13 := Question{Question: "Photovoltaic cell is related to?", Op1: "Geothermal energy", Op2: "Wind energy", Op3: "Nucear energy", Op4: "Solar energy", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1, Ques_Num: 3}
+	// q13 := Question{Question: "Photovoltaic cell is related to?", Type: 1, Op1: "Geothermal energy", Op2: "Wind energy", Op3: "Nucear energy", Op4: "Solar energy", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1, Ques_Num: 3}
 	// db.Create(&q13)
-	// q14 := Question{Question: "Which of the following problems is created by noise pollution?", Op1: "Diarrhoea", Op2: "Hypertension", Op3: "Deafness", Op4: "Irritation", Ans1: false, Ans2: true, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 1, Ques_Num: 4}
+	// q14 := Question{Question: "Which of the following problems is created by noise pollution?", Type: 0, Op1: "Diarrhoea", Op2: "Hypertension", Op3: "Deafness", Op4: "Irritation", Ans1: false, Ans2: true, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 1, Ques_Num: 4}
 	// db.Create(&q14)
-	// q15 := Question{Question: "Which of these conduct electricity?", Op1: "Gold", Op2: "Graphite", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1, Ques_Num: 5}
+	// q15 := Question{Question: "Which of these conduct electricity?", Type: 0, Op1: "Gold", Op2: "Graphite", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1, Ques_Num: 5}
 	// db.Create(&q15)
 
-	// q16 := Question{Question: "The age of tree, in years, can be ascertained by", Op1: "weight", Op2: "height", Op3: "annular rings", Op4: "root", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 2, Ques_Num: 1}
+	// q16 := Question{Question: "The age of tree, in years, can be ascertained by", Type: 1, Op1: "weight", Op2: "height", Op3: "annular rings", Op4: "root", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 2, Ques_Num: 1}
 	// db.Create(&q16)
-	// q17 := Question{Question: "Air is composed of", Op1: "gases", Op2: "water vapours", Op3: "light", Op4: "dust particles", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 2, Ques_Num: 2}
+	// q17 := Question{Question: "Air is composed of", Type: 0, Op1: "gases", Op2: "water vapours", Op3: "light", Op4: "dust particles", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 2, Ques_Num: 2}
 	// db.Create(&q17)
-	// q18 := Question{Question: "Fans, bulbs and tubes etc. in houses are fitted in", Op1: "Series", Op2: "Parallel", Op3: "Mixed", Op4: "Random", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2, Ques_Num: 3}
+	// q18 := Question{Question: "Fans, bulbs and tubes etc. in houses are fitted in", Type: 1, Op1: "Series", Op2: "Parallel", Op3: "Mixed", Op4: "Random", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2, Ques_Num: 3}
 	// db.Create(&q18)
-	// q19 := Question{Question: "The best conductor of electricity", Op1: "Gold", Op2: "Silver", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2, Ques_Num: 4}
+	// q19 := Question{Question: "The best conductor of electricity", Type: 1, Op1: "Gold", Op2: "Silver", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2, Ques_Num: 4}
 	// db.Create(&q19)
-	// q20 := Question{Question: "Which of the following is in liquid form at room temperature?", Op1: "Lithium", Op2: "Hydrogen", Op3: "Francium", Op4: "Gallium", Ans1: false, Ans2: false, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 2, Ques_Num: 5}
+	// q20 := Question{Question: "Which of the following is in liquid form at room temperature?", Type: 0, Op1: "Lithium", Op2: "Hydrogen", Op3: "Francium", Op4: "Gallium", Ans1: false, Ans2: false, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 2, Ques_Num: 5}
 	// db.Create(&q20)
 
 	r := gin.Default()
 	r.POST("/signup", Signup)
 	r.POST("/signin", Signin)
-	// r.GET("/people/:id", GetUser)
+	r.GET("/points/:username", GetUserPoints)
 	// r.POST("/people", CreateUser)
 	// r.PUT("/people/:id", UpdateUser)
 
@@ -168,57 +167,24 @@ func main() {
 	r.GET("/people/:username", GetPeople)
 	r.DELETE("/people/:username/:id", DeleteUser)
 	r.POST("/quiz/:username", CreateQuiz)
-	r.DELETE("/quiz/:username/:genre/:quiz_num", DeleteQuiz)
+	r.DELETE("/quiz/:username/:id", DeleteQuiz)
 	r.POST("/question/:username", CreateQuestion)
 	r.DELETE("question/:username/:genre/:quiz_num/:question_num", DeleteQuestion)
 
 	// any user
+	r.GET("/quiz", GetAllQuiz)
 	r.GET("/genres", GetGenres)
-	r.GET("/quiz/:genre", GetNumQuizzes)
-	r.GET("/quiz/:genre/:quiz_num", GetQuiz)
+	r.GET("/quizzes/:genre", GetNumQuizzes)
+	r.GET("/quiz/:id", GetQuiz)
 	r.POST("/question/:username/:id", EvaluateQuestion)
 	r.GET("/leaderboard", GetLeaderboard)
 	r.GET("leaderboard/:genre", GetLeaderboardByGenre)
+	r.GET("history/:username", GetHistory)
+	r.GET("/quizevaluate/:username/:id/:points", EvaluateQuiz)
 
 	r.Use((cors.Default()))
 	r.Run(":8080")
 }
-
-//UpdateUser for admin
-// func UpdateUser(c *gin.Context) {
-// 	var user User
-// 	id := c.Params.ByName("id")
-// 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-// 		c.AbortWithStatus(404)
-// 		fmt.Println(err)
-// 	}
-// 	c.BindJSON(&user)
-// 	db.Save(&user)
-// 	c.Header("access-control-allow-origin", "*")
-// 	c.JSON(200, user)
-// }
-
-//CreateUser for admin
-// func CreateUser(c *gin.Context) {
-// 	var user User
-// 	c.BindJSON(&user)
-// 	db.Create(&user)
-// 	c.Header("access-control-allow-origin", "*")
-// 	c.JSON(200, user)
-// }
-
-//GetUser for admin
-// func GetUser(c *gin.Context) {
-// 	id := c.Params.ByName("id")
-// 	var user User
-// 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
-// 		c.AbortWithStatus(404)
-// 		fmt.Println(err)
-// 	} else {
-// 		c.Header("access-control-allow-origin", "*")
-// 		c.JSON(200, user)
-// 	}
-// }
 
 //Signup user
 func Signup(c *gin.Context) {
@@ -227,7 +193,7 @@ func Signup(c *gin.Context) {
 	var existinguser User
 	if err := db.Where("username = ?", user.Username).First(&existinguser).Error; err == nil {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{user.Username: "already exists. Try another"})
+		c.JSON(201, gin.H{user.Username: "already exists. Try another"})
 	} else {
 		user.Points = 0
 		user.Role = 0
@@ -246,15 +212,28 @@ func Signin(c *gin.Context) {
 	c.BindJSON(&user)
 	if err := db.Where("username = ?", user.Username).First(&existinguser).Error; err != nil {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{user.Username: "does not exist"})
+		c.JSON(201, gin.H{user.Username: "does not exist"})
 	} else {
 		if err = bcrypt.CompareHashAndPassword([]byte(existinguser.Password), []byte(user.Password)); err != nil {
 			c.Header("access-control-allow-origin", "*")
-			c.JSON(200, gin.H{user.Username: "incorrect password"})
+			c.JSON(202, gin.H{user.Username: "incorrect password"})
 		} else {
 			c.Header("access-control-allow-origin", "*")
-			c.JSON(200, gin.H{user.Username: "logged in"})
+			c.JSON(200, existinguser)
 		}
+	}
+}
+
+//GetUserPoints for any user
+func GetUserPoints(c *gin.Context) {
+	username := c.Params.ByName("username")
+	var user Points
+	if err := db.Where("username = ?", username).First(&user).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	} else {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(200, user)
 	}
 }
 
@@ -276,7 +255,7 @@ func GetPeople(c *gin.Context) {
 		}
 	} else {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{username: "You're not an admin"})
+		c.JSON(201, gin.H{username: "You're not an admin"})
 	}
 }
 
@@ -294,7 +273,7 @@ func DeleteUser(c *gin.Context) {
 		c.JSON(200, gin.H{"id #" + id: "deleted"})
 	} else {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{username: "You're not an admin"})
+		c.JSON(201, gin.H{username: "You're not an admin"})
 	}
 }
 
@@ -323,7 +302,7 @@ func CreateQuiz(c *gin.Context) {
 		c.JSON(200, quiz)
 	} else {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{username: "You're not an admin"})
+		c.JSON(201, gin.H{username: "You're not an admin"})
 	}
 }
 
@@ -333,10 +312,11 @@ func DeleteQuiz(c *gin.Context) {
 	var user User
 	db.Where("username = ?", username).First(&user)
 	if user.Role == 1 {
-		genre_name := c.Params.ByName("genre")
-		quiz_num := c.Params.ByName("quiz_num")
+		id := c.Params.ByName("id")
 		var quiz Quiz
-		db.Where("genre = ?", genre_name).Where("quiz_num = ?", quiz_num).First(&quiz)
+		db.Where("id = ?", id).First(&quiz)
+		genre_name := quiz.Genre
+		quiz_num := quiz.Quiz_Num
 		num_questions := quiz.Num_Questions
 		d := db.Where("genre = ?", genre_name).Where("quiz_num = ?", quiz_num).Delete(&quiz)
 
@@ -352,10 +332,10 @@ func DeleteQuiz(c *gin.Context) {
 
 		fmt.Println(d)
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{"quiz #" + quiz_num: "deleted"})
+		c.JSON(200, quiz)
 	} else {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{username: "You're not an admin"})
+		c.JSON(201, gin.H{username: "You're not an admin"})
 	}
 }
 
@@ -378,7 +358,7 @@ func CreateQuestion(c *gin.Context) {
 		c.JSON(200, question)
 	} else {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{username: "You're not an admin"})
+		c.JSON(201, gin.H{username: "You're not an admin"})
 	}
 }
 
@@ -402,11 +382,23 @@ func DeleteQuestion(c *gin.Context) {
 		c.JSON(200, gin.H{"question #" + ques_num: "deleted"})
 	} else {
 		c.Header("access-control-allow-origin", "*")
-		c.JSON(200, gin.H{username: "You're not an admin"})
+		c.JSON(201, gin.H{username: "You're not an admin"})
 	}
 }
 
 // --------------------------------------------------admin functions over-------------------------------------------------------------//
+
+//GetAllQuiz to get all the quizes
+func GetAllQuiz(c *gin.Context) {
+	var quiz []Quiz
+	if err := db.Find(&quiz).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	} else {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(200, quiz)
+	}
+}
 
 //GetGenres to retrieve all genres
 func GetGenres(c *gin.Context) {
@@ -436,12 +428,13 @@ func GetNumQuizzes(c *gin.Context) {
 
 // GetQuiz for a quiz retirves all the questions for a quiz
 func GetQuiz(c *gin.Context) {
-	genre := c.Params.ByName("genre")
-	quiz_num := c.Params.ByName("quiz_num")
-	fmt.Println(genre)
-	fmt.Println(quiz_num)
+	id := c.Params.ByName("id")
+	var quiz Quiz
+	db.Where("id = ?", id).First(&quiz)
+	genre := quiz.Genre
+	quiz_num := quiz.Quiz_Num
 	var question []Question
-	if err := db.Where("Genre = ?", genre).Where("Quiz_Num = ?", quiz_num).Find(&question).Error; err != nil {
+	if err := db.Where("genre = ?", genre).Where("quiz_num = ?", quiz_num).Find(&question).Error; err != nil {
 		c.AbortWithStatus(404)
 		fmt.Println(err)
 	} else {
@@ -467,7 +460,7 @@ func EvaluateQuestion(c *gin.Context) {
 		point.Username = username
 		point.Genre = question.Genre
 		point.Points = 0
-		point.Cur_Points = 0
+		//point.Cur_Points = 0
 		db.Create(&point)
 	}
 	db.Where("username = ?", username).First(&user)
@@ -488,13 +481,13 @@ func EvaluateQuestion(c *gin.Context) {
 		flag = 1
 	}
 	if question.Ques_Num == 1 {
-		point.Cur_Points = 0
+		//point.Cur_Points = 0
 	}
 	if flag == 0 {
 		fmt.Println("Correct Answer")
 		point.Points += 5
 		user.Points += 5
-		point.Cur_Points += 5
+		//point.Cur_Points += 5
 	} else {
 		fmt.Println("Wrong Answer")
 	}
@@ -503,13 +496,23 @@ func EvaluateQuestion(c *gin.Context) {
 
 	if question.Ques_Num == quiz.Num_Questions {
 		var history History
+		currentTime := time.Now()
 		history.Username = user.Username
 		history.Genre = question.Genre
 		history.Quiz_Num = question.Quiz_Num
-		history.Score = point.Cur_Points
+		//history.Score = point.Cur_Points
+		history.Timestamp = currentTime.Format("2006-01-02 15:04:05")
 		db.Create(&history)
-		point.Cur_Points = 0
+		//point.Cur_Points = 0
 		db.Save(&point)
+	}
+
+	if flag == 0 {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(200, user)
+	} else {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(201, user)
 	}
 }
 
@@ -542,4 +545,60 @@ func GetLeaderboardByGenre(c *gin.Context) {
 		})
 		c.JSON(200, user)
 	}
+}
+
+// GetHistory function
+func GetHistory(c *gin.Context) {
+	var points []History
+	username := c.Params.ByName("username")
+	if err := db.Where("username = ?", username).Find(&points).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	} else {
+		c.Header("access-control-allow-origin", "*")
+		sort.SliceStable(points, func(i, j int) bool {
+			return points[i].Timestamp > points[j].Timestamp
+		})
+		c.JSON(200, points)
+	}
+}
+
+// EvaluateQuiz function
+func EvaluateQuiz(c *gin.Context) {
+	// update total user points, points table, history
+	id := c.Params.ByName("id") //quiz id
+	username := c.Params.ByName("username")
+	p := c.Params.ByName("points")
+	points, _ := strconv.ParseUint(p, 10, 64)
+	currentTime := time.Now()
+	var user User
+	var quiz Quiz
+	var history History
+	var point Points
+
+	db.Where("username = ?", username).First(&user)
+	db.Where("id = ?", id).First(&quiz)
+
+	user.Points += points
+	db.Save(&user)
+
+	history.Username = user.Username
+	history.Genre = quiz.Genre
+	history.Quiz_Num = quiz.Quiz_Num
+	history.Score = points
+	history.Timestamp = currentTime.Format("2006-01-02 15:04:05")
+	db.Save(&history)
+
+	if err := db.Where("genre = ?", quiz.Genre).First(&point).Error; err != nil {
+		//create user in points table
+		point.Username = user.Username
+		point.Genre = quiz.Genre
+		point.Points = points
+		db.Create(&point)
+	} else {
+		point.Points += points
+		db.Save(&point)
+	}
+	c.Header("access-control-allow-origin", "*")
+	c.JSON(200, point)
 }
