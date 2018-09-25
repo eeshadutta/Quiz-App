@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Home from './Home';
 import Play from './Play';
+import './App.css'
 import Leaderboard from './Leaderboard';
 import PastQuizzes from './PastQuizzes';
 import ViewQuizzes from './ViewQuizzes';
@@ -10,6 +11,9 @@ import EditQuiz from './EditQuiz';
 import ViewPeople from './ViewPeople';
 import DeletePerson from './DeletePerson';
 import ShowQuiz from './ShowQuiz';
+import ViewQuizAdmin from './ViewQuizAdmin'
+import LeaderboardGenre from './LeaderboardGenre'
+import CreateQuizQuestions from './CreateQuizQuestions'
 
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
@@ -25,6 +29,8 @@ class App extends Component {
         emailid: "",
         city: "",
         password: "",
+        message: "",
+        displayMessage: false,
       },
       data: [],
     }
@@ -39,6 +45,7 @@ class App extends Component {
     this.handleCity = this.handleCity.bind(this)
     this.handlePassword = this.handlePassword.bind(this)
     this.handleLogout = this.handleLogout.bind(this)
+    this.handleMessageRemove = this.handleMessageRemove.bind(this)
   }
 
   handleSignin(event) {
@@ -54,6 +61,14 @@ class App extends Component {
             sessionStorage.setItem("username", res.data.username);
             sessionStorage.setItem("role", res.data.role);
             window.location.reload();
+          }
+          if (res.status == 201) {
+            this.setState({ message: "Invalid Username. Please enter a correct Username."})
+            this.setState({ displayMessage: true })
+          }
+          if (res.status == 202) {
+            this.setState({ message: "Incorrect Password. Please enter your correct password" })
+            this.setState({ displayMessage: true })
           }
         }));
   }
@@ -72,6 +87,14 @@ class App extends Component {
             sessionStorage.setItem("username", res.data.username);
             sessionStorage.setItem("role", res.data.role);
             window.location.reload();
+          }
+          if (res.status == 201) {
+            this.setState({ message: "Username already exists. Please use another"})
+            this.setState({ displayMessage: true })
+          }
+          if (res.status == 202) {
+            this.setState({ message: "Email ID already exists. Please use another"})
+            this.setState({ displayMessage: true })
           }
         }));
   }
@@ -111,6 +134,11 @@ class App extends Component {
   handleLogout() {
     sessionStorage.clear();
     window.location.reload();
+  }
+
+  handleMessageRemove() {
+    this.setState({ displayMessage: false })
+    this.setState({ message: ""})
   }
 
   render() {
@@ -164,10 +192,13 @@ class App extends Component {
                 <Route exact path='/' component={Home} />
                 <Route exact path='/Play' component={Play} />
                 <Route exact path='/Leaderboard' component={Leaderboard} />
+                <Route exact path='/Leaderboard/:genre' component={LeaderboardGenre} />
                 <Route exact path='/PastQuizzes' component={PastQuizzes} />
                 <Route exact path='/Play/:id' component={ShowQuiz} />
                 {role && <Route exact path='/ViewQuizzes' component={ViewQuizzes} />}
+                {role && <Route exact path='/ViewQuizzes/:id' component={ViewQuizAdmin} />}
                 {role && <Route exact path='/CreateQuiz' component={CreateQuiz} />}
+                {role && <Route exact path='/CreateQuiz/:genre/:quiz_num' component={CreateQuizQuestions} />}
                 {role && <Route exact path='/DeleteQuiz' component={DeleteQuiz} />}
                 {role && <Route exact path='/EditQuiz' component={EditQuiz} />}
                 {role && <Route exact path='/ViewPeople' component={ViewPeople} />}
@@ -189,8 +220,8 @@ class App extends Component {
                     <div className="modal-body">
                       <div className="well">
                         <ul className="nav nav-tabs">
-                          <li className="active"><a href="#login" data-toggle="tab">Login</a></li>
-                          <li><a href="#create" data-toggle="tab">Create Account</a></li>
+                          <li className="active" onClick={this.handleMessageRemove}><a href="#login" data-toggle="tab">Login</a></li>
+                          <li onClick={this.handleMessageRemove}><a href="#create" data-toggle="tab">Create Account</a></li>
                         </ul>
                         <div id="myTabContent" className="tab-content">
                           <div className="tab-pane active in" id="login">
@@ -260,6 +291,11 @@ class App extends Component {
               </div>
             </div>
           </div>
+        }
+        {this.state.displayMessage && 
+        <div>
+          <h4 className="text-center">{this.state.message}</h4>
+        </div>
         }
       </div>
     );

@@ -44,11 +44,11 @@ class ShowQuiz extends Component {
         console.log(this.state.correct_ans);
         i = 0;
         for (var item in this.state.data) {
-            html.push(<div><h4>{this.state.data[item].question}</h4>
+            html.push(<div><h4>{parseInt(item) + 1}) {this.state.data[item].question}</h4>
                 <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />a) {this.state.data[item].op1}</label></div>
                 <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />b) {this.state.data[item].op2}</label></div>
                 <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />c) {this.state.data[item].op3}</label></div>
-                <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />d) {this.state.data[item].op4}</label></div>
+                <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />d) {this.state.data[item].op4}</label></div><br></br>
             </div>);
         }
         return html;

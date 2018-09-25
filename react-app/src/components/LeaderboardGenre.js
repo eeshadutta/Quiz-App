@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import './App.css';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import './App.css'
 
-class ViewQuizzes extends Component {
+class LeaderboardGenre extends Component {
     constructor() {
         super();
         this.state = {
@@ -11,7 +10,7 @@ class ViewQuizzes extends Component {
     }
 
     componentDidMount() {
-        const request = new Request('http://127.0.0.1:8080/quiz');
+        const request = new Request('http://127.0.0.1:8080/leaderboard/' + this.props.match.params.genre);
         fetch(request)
             .then(response => response.json())
             .then(data => this.setState({ data: data }));
@@ -21,30 +20,27 @@ class ViewQuizzes extends Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    <h1 className="App-title">View All Quizzes</h1>
+                    <h1 className="App-title">Leaderboard</h1>
                 </header>
-
+                
+                <h3>{this.props.match.params.genre} Leaderboard</h3>
                 <table className="table-hover">
                     <thead>
                         <tr>
                             <th>Serial No.</th>
-                            <th>Genre</th>
-                            <th>Quiz Number</th>
-                            <th>Number of questions</th>
-                            <th></th>
+                            <th>Username</th>
+                            <th>Points</th>
                         </tr>
                     </thead>
-                    <tbody>{this.state.data.map(function (item, key) {
+                    <tbody>{this.state.data.map(function(item, key) {
                         return (
                             <tr key={key}>
                                 <td>{key += 1}</td>
-                                <td>{item.genre}</td>
-                                <td>{item.quiz_num}</td>
-                                <td>{item.num_questions}</td>
-                                <td><Link to={`/ViewQuizzes/${item.id}`}>View</Link></td>
+                                <td>{item.username}</td>
+                                <td>{item.points}</td>
                             </tr>
                         )
-                    })}
+                    }, this)}
                     </tbody>
                 </table>
             </div>
@@ -52,4 +48,4 @@ class ViewQuizzes extends Component {
     }
 }
 
-export default ViewQuizzes;
+export default LeaderboardGenre;

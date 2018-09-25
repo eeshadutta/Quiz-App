@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './App.css'
 
 class PastQuizzes extends Component {
     constructor() {
@@ -22,7 +23,7 @@ class PastQuizzes extends Component {
                     <h1 className="App-title">Your Previous Challenges</h1>
                 </header>
 
-                <table className="table table-hover">
+                <table className="table-hover">
                     <thead>
                         <tr>
                             <th>Serial No.</th>

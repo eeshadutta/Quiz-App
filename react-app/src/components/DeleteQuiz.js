@@ -44,7 +44,7 @@ class DeleteQuiz extends Component {
                     <h1 className="App-title">Delete a Quiz</h1>
                 </header>
                 <form onSubmit={this.handleSubmit}>
-                    <table className="table table-hover">
+                    <table className="table-hover">
                         <thead>
                             <tr>
                                 <th></th>
@@ -66,8 +66,8 @@ class DeleteQuiz extends Component {
                             )
                         }, this)}
                         </tbody>
-                    </table>
-                    <input type="submit" value="Delete Quiz" className="btn btn-default"></input>
+                    </table><br></br>
+                    <input type="submit" value="Delete Quiz" className="btn btn-default btn-lg"></input><br></br>
                 </form>
 
                 {this.state.submitted &&

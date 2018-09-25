@@ -194,6 +194,9 @@ func Signup(c *gin.Context) {
 	if err := db.Where("username = ?", user.Username).First(&existinguser).Error; err == nil {
 		c.Header("access-control-allow-origin", "*")
 		c.JSON(201, gin.H{user.Username: "already exists. Try another"})
+	} else if err := db.Where("emailid = ?", user.EmailID).First(&existinguser).Error; err == nil {
+		c.Header("access-control-allow-origin", "*")
+		c.JSON(202, gin.H{user.EmailID: "already exists. Try another"})
 	} else {
 		user.Points = 0
 		user.Role = 0
@@ -348,6 +351,7 @@ func CreateQuestion(c *gin.Context) {
 		var question Question
 		c.BindJSON(&question)
 		db.Create(&question)
+		fmt.Println(question)
 
 		var quiz Quiz
 		db.Where("Genre = ?", question.Genre).Where("Quiz_Num = ?", question.Quiz_Num).First(&quiz)

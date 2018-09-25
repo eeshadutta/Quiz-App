@@ -18,15 +18,15 @@ class NewPerson extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit (event) {
+  handleSubmit(event) {
     event.preventDefault();
     fetch('http://localhost:8080/people', {
-     method: 'POST',
-     body: JSON.stringify(this.state.formData),
-   })
+      method: 'POST',
+      body: JSON.stringify(this.state.formData),
+    })
       .then(response => {
-        if(response.status >= 200 && response.status < 300)
-          this.setState({submitted: true});
+        if (response.status >= 200 && response.status < 300)
+          this.setState({ submitted: true });
       });
   }
 
@@ -47,22 +47,22 @@ class NewPerson extends Component {
         <header className="App-header">
           <h1 className="App-title">Create a New Person</h1>
         </header>
-        <br/><br/>
+        <br /><br />
         <div className="formContainer">
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
-                <label>First Name</label>
-                <input type="text" className="form-control" value={this.state.firstName} onChange={this.handleFChange}/>
+              <label>First Name</label>
+              <input type="text" className="form-control" value={this.state.firstName} onChange={this.handleFChange} />
             </div>
             <div className="form-group">
-                <label>Last Name</label>
-                <input type="text" className="form-control" value={this.state.lastName} onChange={this.handleLChange}/>
+              <label>Last Name</label>
+              <input type="text" className="form-control" value={this.state.lastName} onChange={this.handleLChange} />
             </div>
             <div className="form-group">
-                <label>City</label>
-                <input type="text" className="form-control" value={this.state.city} onChange={this.handleCChange}/>
+              <label>City</label>
+              <input type="text" className="form-control" value={this.state.city} onChange={this.handleCChange} />
             </div>
-                <button type="submit" className="btn btn-default">Submit</button>
+            <button type="submit" className="btn btn-default">Submit</button>
           </form>
         </div>
 
@@ -71,7 +71,7 @@ class NewPerson extends Component {
             <h2>
               New person successfully added.
             </h2>
-             This has been printed using conditional rendering.
+            This has been printed using conditional rendering.
           </div>
         }
 

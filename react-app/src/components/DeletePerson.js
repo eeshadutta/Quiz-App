@@ -69,8 +69,8 @@ class DeletePerson extends Component {
               )
             }, this)}
             </tbody>
-          </table>
-          <input type="submit" value="Delete User" className="btn btn-default"></input>
+          </table><br></br>
+          <input type="submit" value="Delete User" className="btn btn-default btn-lg"></input><br></br>
         </form>
 
         {this.state.submitted &&

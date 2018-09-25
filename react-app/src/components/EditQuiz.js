@@ -70,7 +70,7 @@ class EditQuiz extends Component {
                             <h1 className="App-title">Edit a Quiz</h1>
                         </header>
                         <form onSubmit={this.handleQuizSelection}>
-                            <table className="table table-hover">
+                            <table className="table-hover">
                                 <thead>
                                     <tr>
                                         <th></th>
