@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import './App.css'
 
-class CreateQuizQuestions extends Component {
+class EditQuestion extends Component {
     constructor() {
         super();
         this.state = {
+            data: [],
+            marked_ans: [],
             formData: {
                 question: "",
                 op1: "",
@@ -16,22 +19,41 @@ class CreateQuizQuestions extends Component {
                 ans3: false,
                 ans4: false,
                 genre: "",
-                quiz_num: "",
+                quiz_num: 0,
             },
-            marked_ans: [],
+            //setMessage: false,
+            //message: "",
             addNew: false,
-            setMessage: false,
-            message: "",
+            ans: "",
         }
         this.handleAChange = this.handleAChange.bind(this)
         this.handleBChange = this.handleBChange.bind(this)
         this.handleCChange = this.handleCChange.bind(this)
         this.handleDChange = this.handleDChange.bind(this)
         this.handleQChange = this.handleQChange.bind(this)
-        this.createQuestion = this.createQuestion.bind(this)
-        this.addNewQuestion = this.addNewQuestion.bind(this)
         this.handleCheckboxSelection = this.handleCheckboxSelection.bind(this)
+        this.editQuestion = this.editQuestion.bind(this)
         this.handleDone = this.handleDone.bind(this)
+    }
+
+    componentDidMount() {
+        const request = new Request('http://127.0.0.1:8080/question/' + this.props.match.params.id);
+        fetch(request)
+            .then(response => response.json())
+            .then(data => this.setState({ data: data }));
+        console.log(this.state.data)
+        this.state.formData.question = this.state.data.question
+        this.state.formData.op1 = this.state.data.op1
+        this.state.formData.op2 = this.state.data.op2
+        this.state.formData.op3 = this.state.data.op3
+        this.state.formData.op4 = this.state.data.op4
+        // this.state.formData.ans1 = this.state.data.ans1
+        // this.state.formData.ans2 = this.state.data.ans2
+        // this.state.formData.ans3 = this.state.data.ans3
+        // this.state.formData.ans4 = this.state.data.ans4
+        this.state.formData.genre = this.state.data.genre
+        this.state.formData.quiz_num = this.state.data.quiz_num
+        console.log(this.state.ans);
     }
 
     handleAChange(event) {
@@ -59,10 +81,8 @@ class CreateQuizQuestions extends Component {
         console.log(this.state.marked_ans)
     }
 
-    createQuestion(event) {
+    editQuestion(event) {
         event.preventDefault();
-        this.state.formData.genre = this.props.match.params.genre
-        this.state.formData.quiz_num = parseInt(this.props.match.params.quiz_num)
         var i = 1;
         if (this.state.marked_ans[1] == true) {
             this.state.formData.ans1 = true
@@ -76,46 +96,63 @@ class CreateQuizQuestions extends Component {
         if (this.state.marked_ans[4] == true) {
             this.state.formData.ans4 = true
         }
-        if (this.state.formData.question == "" || this.state.formData.op1 == "" || this.state.formData.op2 == "" || this.state.formData.op3 == "" || this.state.formData.op4 == "") {
-            this.setState({ setMessage: true });
-            this.setState({ message: "Empty fields not allowed." });
+        if (this.state.formData.ans1 == false && this.state.formData.ans2 == false && this.state.formData.ans3 == false && this.state.formData.ans4 == false) {
+            this.state.formData.ans1 = this.state.data.ans1
+            this.state.formData.ans2 = this.state.data.ans2
+            this.state.formData.ans3 = this.state.data.ans3
+            this.state.formData.ans4 = this.state.data.ans4
         }
-        else {
-            fetch('http://127.0.0.1:8080/question/' + sessionStorage.getItem("username"), {
-                method: 'POST',
-                body: JSON.stringify(this.state.formData),
-            });
-            this.setState({ addNew: true });
-            this.setState({ setMessage: false });
-        }
-    }
+        if (this.state.formData.op1 == "") this.state.formData.op1 = this.state.data.op1
+        if (this.state.formData.op2 == "") this.state.formData.op2 = this.state.data.op2
+        if (this.state.formData.op3 == "") this.state.formData.op3 = this.state.data.op3
+        if (this.state.formData.op4 == "") this.state.formData.op4 = this.state.data.op4
 
-    addNewQuestion() {
-        this.setState({ addNew: false });
-        window.location.reload()
+        console.log(this.state.formData)
+        fetch('http://127.0.0.1:8080/question/' + this.props.match.params.id, {
+            method: 'PUT',
+            body: JSON.stringify(this.state.formData),
+        });
+        this.setState({ addNew: true })
     }
 
     handleDone() {
-        const link = '/CreateQuiz'
-        this.props.history.push(link)
+        const link = '/EditQuiz/' + sessionStorage.getItem("quizEditingID")
+        this.props.history.push(link);
     }
 
     render() {
+        this.state.ans = "";
+        if (this.state.data.ans1 == true) this.state.ans += "a "
+        if (this.state.data.ans2 == true) this.state.ans += "b "
+        if (this.state.data.ans3 == true) this.state.ans += "c "
+        if (this.state.data.ans4 == true) this.state.ans += "d"
+        console.log(this.state.ans)
+        console.log(this.state.data)
         return (
             <div className="App">
                 <header className="App-header">
-                    <h1 className="App-title">Create a Question</h1>
+                    <h1 className="App-title">Edit Question</h1>
                 </header>
+                <div>
+                    <h3>Original Question</h3>
+                    <h4>{this.state.data.question}</h4>
+                    <h5>a) {this.state.data.op1}</h5>
+                    <h5>b) {this.state.data.op2}</h5>
+                    <h5>c) {this.state.data.op3}</h5>
+                    <h5>d) {this.state.data.op4}</h5>
+                    <h5><b>Correct Answer: {this.state.ans}</b></h5><br></br><br></br>
+                </div>
                 <div className="row">
                     <div className="col-md-3"></div>
                     <div className="col-md-6">
                         <div className="form-horizontal">
-                            <form onSubmit={this.createQuestion}>
+                            <form onSubmit={this.editQuestion}>
                                 <div className="form-group">
-                                    <h3>Question:</h3>
+                                    <h4>Question:</h4>
                                     <input type="text" className="form-control" value={this.state.question} onChange={this.handleQChange} />
-                                </div><br></br><br></br>
-                                <h4>Options: </h4>
+                                </div>
+                                <h5>Options: </h5>
+                                <h5>(Please check all those boxes which are correct answer)</h5>
                                 <div className="form-group">
                                     <div className="row">
                                         <input type="checkbox" className="custom-control custom-checkbox custom-control-input" name="1" onChange={this.handleCheckboxSelection}></input>
@@ -140,7 +177,7 @@ class CreateQuizQuestions extends Component {
                                         <input type="text" className="form-control-inline" value={this.state.op4} onChange={this.handleDChange} />
                                     </div>
                                 </div><br></br><br></br>
-                                <button type="submit" className="btn btn-default btn-lg">Create Question</button>
+                                <button type="submit" className="btn btn-default btn-lg">Edit Question</button>
                             </form>
                             <br></br><br></br>
                             {this.state.setMessage &&
@@ -148,8 +185,7 @@ class CreateQuizQuestions extends Component {
                             }
                             {this.state.addNew &&
                                 <div>
-                                    <h4>Question added successfully</h4>
-                                    <button type="button" onClick={this.addNewQuestion} className="btn btn-default">Add Another Question</button><br></br><br></br>
+                                    <h4>Question edited successfully</h4>
                                 </div>
                             }
                             <button type="button" className="btn btn-default btn-lg btn-block" onClick={this.handleDone}>Done</button>
@@ -158,9 +194,9 @@ class CreateQuizQuestions extends Component {
                     <div className="col-md-3"></div>
                 </div>
 
-            </div >
+            </div>
         );
     }
 }
 
-export default CreateQuizQuestions;
+export default EditQuestion;

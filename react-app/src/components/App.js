@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import './App.css'
+
 import Home from './Home';
 import Play from './Play';
-import './App.css'
 import Leaderboard from './Leaderboard';
 import PastQuizzes from './PastQuizzes';
 import ViewQuizzes from './ViewQuizzes';
@@ -14,9 +16,8 @@ import ShowQuiz from './ShowQuiz';
 import ViewQuizAdmin from './ViewQuizAdmin'
 import LeaderboardGenre from './LeaderboardGenre'
 import CreateQuizQuestions from './CreateQuizQuestions'
-
-
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import EditQuizQuestions from './EditQuizQuestions'
+import EditQuestion from './EditQuestion'
 
 class App extends Component {
   constructor() {
@@ -201,6 +202,8 @@ class App extends Component {
                 {role && <Route exact path='/CreateQuiz/:genre/:quiz_num' component={CreateQuizQuestions} />}
                 {role && <Route exact path='/DeleteQuiz' component={DeleteQuiz} />}
                 {role && <Route exact path='/EditQuiz' component={EditQuiz} />}
+                {role && <Route exact path='/EditQuiz/:id' component={EditQuizQuestions} />}
+                {role && <Route exact path='/EditQuestion/:id' component={EditQuestion} />}
                 {role && <Route exact path='/ViewPeople' component={ViewPeople} />}
                 {role && <Route exact path='/DeletePerson' component={DeletePerson} />}
               </Switch>

@@ -12,6 +12,8 @@ class CreateQuiz extends Component {
                 quiz_num: 0,
                 num_questions: 0,
             },
+            setMessage: false,
+            message: "Quiz already exists",
         }
         this.handleGenre = this.handleGenre.bind(this)
         this.handleQuizNumber = this.handleQuizNumber.bind(this)
@@ -38,11 +40,16 @@ class CreateQuiz extends Component {
             body: JSON.stringify(this.state.formData),
         })
             .then(response => {
-                if (response.status == 200)
+                if (response.status == 200) {
+                    this.setState({ setMessage: false })
                     sessionStorage.setItem("num_questions", this.state.formData.num_questions)
+                    const link = '/CreateQuiz/' + this.state.formData.genre + '/' + this.state.formData.quiz_num
+                    this.props.history.push(link)
+                }
+                if (response.status == 202) {
+                    this.setState({ setMessage: true })
+                }
             });
-        const link = '/CreateQuiz/' + this.state.formData.genre + '/' + this.state.formData.quiz_num
-        this.props.history.push(link)
     }
 
     componentDidMount() {
@@ -73,12 +80,12 @@ class CreateQuiz extends Component {
                                     <label>Quiz Number</label>
                                     <input type="text" className="form-control" value={this.state.quiz_num} onChange={this.handleQuizNumber} />
                                 </div>
-                                {/* <div className="form-group">
-                            <label>Number of Questions</label>
-                            <input type="text" className="form-control" value={this.state.num_questions} onChange={this.handleNumberQuestions} />
-                        </div> */}
+                                
                                 <button type="submit" className="btn btn-default" onClick={this.handleSubmit}>Create Quiz</button>
                             </form>
+                            {this.state.setMessage &&
+                                <h4>{this.state.message}</h4>
+                            }
                         </div>
                     </div>
                     <div className="col-md-4"></div>
