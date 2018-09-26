@@ -7,6 +7,7 @@ class EditQuizQuestions extends Component {
         super();
         this.state = {
             data: [],
+            quiz: [],
             genre: "",
             quiz_num: "",
             createQues: false,
@@ -25,6 +26,7 @@ class EditQuizQuestions extends Component {
                 ans4: false,
                 genre: "",
                 quiz_num: "",
+                type: "",
             },
         }
         this.displayQuestions = this.displayQuestions.bind(this);
@@ -36,6 +38,7 @@ class EditQuizQuestions extends Component {
         this.handleCChange = this.handleCChange.bind(this)
         this.handleDChange = this.handleDChange.bind(this)
         this.handleQChange = this.handleQChange.bind(this)
+        this.handleTChange = this.handleTChange.bind(this)
         this.handleCheckboxSelection = this.handleCheckboxSelection.bind(this)
         this.handleEditQuestion = this.handleEditQuestion.bind(this);
     }
@@ -46,6 +49,11 @@ class EditQuizQuestions extends Component {
         fetch(request)
             .then(response => response.json())
             .then(data => this.setState({ data: data }));
+
+        const req = new Request('http://127.0.0.1:8080/quizdetails/' + this.props.match.params.id);
+        fetch(req)
+        .then(response => response.json())
+        .then(data => this.setState({ quiz: data }));
     }
 
     handleDeleteQuestion(event) {
@@ -85,15 +93,18 @@ class EditQuizQuestions extends Component {
         this.state.formData.question = event.target.value
     }
 
+    handleTChange(event) {
+        this.state.formData.type = event.target.value
+    }
+
     handleCheckboxSelection(event) {
         this.state.marked_ans[parseInt(event.target.name)] = event.target.checked;
-        console.log(this.state.marked_ans)
     }
 
     createQuestion(event) {
         event.preventDefault();
-        this.state.formData.genre = this.state.genre
-        this.state.formData.quiz_num = this.state.quiz_num
+        this.state.formData.genre = this.state.quiz.genre
+        this.state.formData.quiz_num = this.state.quiz.quiz_num
         var i = 1;
         if (this.state.marked_ans[1] == true) {
             this.state.formData.ans1 = true
@@ -107,7 +118,7 @@ class EditQuizQuestions extends Component {
         if (this.state.marked_ans[4] == true) {
             this.state.formData.ans4 = true
         }
-        if (this.state.formData.question == "" || this.state.formData.op1 == "" || this.state.formData.op2 == "" || this.state.formData.op3 == "" || this.state.formData.op4 == "") {
+        if (this.state.formData.question == "" || this.state.formData.op1 == "" || this.state.formData.op2 == "" || this.state.formData.op3 == "" || this.state.formData.op4 == "" || this.state.formData.type == "") {
             this.setState({ setMessage: true });
             this.setState({ message: "Empty fields not allowed." });
         }
@@ -136,6 +147,7 @@ class EditQuizQuestions extends Component {
             if (this.state.data[item].ans4 == true)
                 ans += "d"
             html.push(<div><h4>{this.state.data[item].question}</h4>
+                <span className="badge badge-info">{this.state.data[item].type}</span>                    
                 <h5>a) {this.state.data[item].op1}</h5>
                 <h5>b) {this.state.data[item].op2}</h5>
                 <h5>c) {this.state.data[item].op3}</h5>
@@ -169,6 +181,11 @@ class EditQuizQuestions extends Component {
                                     <div className="form-group">
                                         <h3>Question:</h3>
                                         <input type="text" className="form-control" value={this.state.question} onChange={this.handleQChange} />
+                                    </div><br></br>
+                                    <div className="form-group">
+                                        <h3>Type:</h3>
+                                        <h5>"scq" for single correct and "mcq" for multiple correct</h5>
+                                        <input type="text" className="form-control" value={this.state.type} onChange={this.handleTChange} />
                                     </div><br></br>
                                     <h4>Options: </h4>
                                     <div className="form-group">

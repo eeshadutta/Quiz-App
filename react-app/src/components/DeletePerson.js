@@ -8,9 +8,11 @@ class DeletePerson extends Component {
       data: [],
       selectedOption: null,
       submitted: false,
+      setMessage: false,
     }
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.displayPeople = this.displayPeople.bind(this);
   }
 
   componentDidMount() {
@@ -26,15 +28,32 @@ class DeletePerson extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch('http://127.0.0.1:8080/people/' + sessionStorage.getItem("username") + this.state.selectedOption, {
-      method: 'DELETE',
-    })
-      .then(response => {
-        if (response.status >= 200 && response.status < 300)
-          this.setState({ submitted: true });
-        this.setState({ selectedOption: null });
-        this.componentDidMount();
-      });
+      fetch('http://127.0.0.1:8080/people/' + sessionStorage.getItem("username") + '/' + this.state.selectedOption, {
+        method: 'DELETE',
+      })
+        .then(response => {
+          if (response.status >= 200 && response.status < 300)
+            this.setState({ submitted: true });
+          this.setState({ selectedOption: null });
+          this.setState({ setMessage: false});
+          this.componentDidMount();
+        });
+  }
+
+  displayPeople() {
+    var html = [];
+    for (var item in this.state.data) {
+      if (this.state.data[item].username != sessionStorage.getItem("username")) {
+        html.push(<tr>
+          <td><input type="radio" value={this.state.data[item].id} checked={this.state.selectedOption == this.state.data[item].id} onChange={this.handleOptionChange}></input></td>
+          <td>{this.state.data[item].firstname}</td>
+          <td>{this.state.data[item].lastname}</td>
+          <td>{this.state.data[item].username}</td>
+          <td>{this.state.data[item].city}</td>
+        </tr>)
+      }
+    }
+    return html;
   }
 
   render() {
@@ -49,26 +68,13 @@ class DeletePerson extends Component {
             <thead>
               <tr>
                 <th></th>
-                <th>ID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Username</th>
                 <th>City</th>
               </tr>
             </thead>
-            <tbody>{this.state.data.map(function (item, key) {
-              return (
-                <tr key={key}>
-                  <td><input type="radio" value={item.id} checked={this.state.selectedOption == item.id} onChange={this.handleOptionChange}></input></td>
-                  <td>{item.id}</td>
-                  <td>{item.firstname}</td>
-                  <td>{item.lastname}</td>
-                  <td>{item.username}</td>
-                  <td>{item.city}</td>
-                </tr>
-              )
-            }, this)}
-            </tbody>
+            <tbody>{this.displayPeople()}</tbody>
           </table><br></br>
           <input type="submit" value="Delete User" className="btn btn-default btn-lg"></input><br></br>
         </form>
@@ -76,6 +82,11 @@ class DeletePerson extends Component {
         {this.state.submitted &&
           <div>
             <h5>User deleted successfully</h5>
+          </div>
+        }
+        {this.state.setMessage && 
+          <div>
+            <h5>You cannot delete yourself</h5>
           </div>
         }
       </div>

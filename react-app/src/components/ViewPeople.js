@@ -9,7 +9,6 @@ class ViewPeople extends Component {
     }
   }
 
-  // Lifecycle hook, runs after component has mounted onto the DOM structure
   componentDidMount() {
     const request = new Request('http://127.0.0.1:8080/people/' + sessionStorage.getItem("username"));
     fetch(request)

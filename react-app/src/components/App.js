@@ -30,10 +30,10 @@ class App extends Component {
         emailid: "",
         city: "",
         password: "",
-        message: "",
-        displayMessage: false,
-      },
+        },
       data: [],
+      message: "",
+      displayMessage: false,
     }
     this.handleSignin = this.handleSignin.bind(this)
     this.handleSignup = this.handleSignup.bind(this)
@@ -51,6 +51,10 @@ class App extends Component {
 
   handleSignin(event) {
     event.preventDefault();
+    if (this.state.formData.username == "" || this.state.formData.password == "") {
+      this.setState({ message: "Empty fields are not allowed"});
+      this.setState({ displayMessage: true });
+    }
     fetch('http://127.0.0.1:8080/signin', {
       method: 'POST',
       body: JSON.stringify(this.state.formData)
@@ -64,19 +68,23 @@ class App extends Component {
             window.location.reload();
           }
           if (res.status == 201) {
-            this.setState({ message: "Invalid Username. Please enter a correct Username."})
-            this.setState({ displayMessage: true })
+            this.setState({ message: "Invalid Username. Please enter a correct Username."});
+            this.setState({ displayMessage: true });
           }
           if (res.status == 202) {
-            this.setState({ message: "Incorrect Password. Please enter your correct password" })
-            this.setState({ displayMessage: true })
+            this.setState({ message: "Incorrect Password. Please enter your correct password" });
+            this.setState({ displayMessage: true });
           }
         }));
   }
 
   handleSignup(event) {
     event.preventDefault();
-    console.log(this.state.formData);
+    if (this.state.formData.firstname == "" || this.state.formData.lastname == "" || this.state.formData.username == "" || this.state.formData.emailid == "" || this.state.formData.city == "" || this.state.formData.password == "") {
+      this.setState({ message: "Empty fields are not allowed"});
+      this.setState({ displayMessage: true });
+    }
+    else {
     fetch('http://127.0.0.1:8080/signup', {
       method: 'POST',
       body: JSON.stringify(this.state.formData)
@@ -90,14 +98,15 @@ class App extends Component {
             window.location.reload();
           }
           if (res.status == 201) {
-            this.setState({ message: "Username already exists. Please use another"})
-            this.setState({ displayMessage: true })
+            this.setState({ message: "Username already exists. Please use another"});
+            this.setState({ displayMessage: true });
           }
           if (res.status == 202) {
-            this.setState({ message: "Email ID already exists. Please use another"})
-            this.setState({ displayMessage: true })
+            this.setState({ message: "Email ID already exists. Please use another"});
+            this.setState({ displayMessage: true });
           }
         }));
+      }
   }
 
   handleLoginUsername(event) {
@@ -164,7 +173,6 @@ class App extends Component {
                   </div>
                   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul className="nav navbar-nav">
-                      {/* <li><Link to={'/'}>Home</Link></li> */}
                       <li><Link to={'/Play'}>Play</Link></li>
                       <li><Link to={'/Leaderboard'}>Leaderboard</Link></li>
                       <li><Link to={'/PastQuizzes'}>Past Quizzes</Link></li>

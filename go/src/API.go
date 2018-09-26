@@ -48,6 +48,7 @@ type Quiz struct {
 type Question struct {
 	ID       uint   `json:"id"`
 	Question string `json:"question"`
+	Type     string `json:"type"`
 	Op1      string `json:"op1"`
 	Op2      string `json:"op2"`
 	Op3      string `json:"op3"`
@@ -109,48 +110,48 @@ func main() {
 	// z4 := Quiz{Genre: "Science", Quiz_Num: 2, Num_Questions: 5}
 	// db.Create(&z4)
 
-	// q1 := Question{Question: "WW1 began in which year?", Op1: "1923", Op2: "1938", Op3: "1917", Op4: "1914", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1}
+	// q1 := Question{Question: "WW1 began in which year?", Type: "scq", Op1: "1923", Op2: "1938", Op3: "1917", Op4: "1914", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1}
 	// db.Create(&q1)
-	// q2 := Question{Question: "Adolf Hitler was born in which country?", Op1: "France", Op2: "Germany", Op3: "Austria", Op4: "Hungary", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 1}
+	// q2 := Question{Question: "Adolf Hitler was born in which country?", Type: "scq", Op1: "France", Op2: "Germany", Op3: "Austria", Op4: "Hungary", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 1}
 	// db.Create(&q2)
-	// q3 := Question{Question: "JFK was assassinated in", Op1: "New York", Op2: "Austin", Op3: "Dallas", Op4: "Miami", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1}
+	// q3 := Question{Question: "JFK was assassinated in", Type: "scq", Op1: "New York", Op2: "Austin", Op3: "Dallas", Op4: "Miami", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1}
 	// db.Create(&q3)
-	// q4 := Question{Question: "Which of these are of Indian origin?", Op1: "Maulana Azad", Op2: "SC Bose", Op3: "Annie Besant", Op4: "Mahatma Gandhi", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1}
+	// q4 := Question{Question: "Which of these are of Indian origin?", Type: "mcq", Op1: "Maulana Azad", Op2: "SC Bose", Op3: "Annie Besant", Op4: "Mahatma Gandhi", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 1}
 	// db.Create(&q4)
-	// q5 := Question{Question: "Which of these are Mughal emperors?", Op1: "Akbar", Op2: "Jengis Khan", Op3: "Shah Jahan", Op4: "Chandra Gupta Maurya", Ans1: true, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1}
+	// q5 := Question{Question: "Which of these are Mughal emperors?", Type: "mcq", Op1: "Akbar", Op2: "Jengis Khan", Op3: "Shah Jahan", Op4: "Chandra Gupta Maurya", Ans1: true, Ans2: false, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 1}
 	// db.Create(&q5)
 
-	// q6 := Question{Question: "Babar declared himself as an emperor first at", Op1: "Samarkand", Op2: "Farghana", Op3: "Kabul", Op4: "Panipat", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 2}
+	// q6 := Question{Question: "Babar declared himself as an emperor first at", Type: "scq", Op1: "Samarkand", Op2: "Farghana", Op3: "Kabul", Op4: "Panipat", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "History", Quiz_Num: 2}
 	// db.Create(&q6)
-	// q7 := Question{Question: "Which site of Harappan civilization is located in Haryana?", Op1: "Banawali", Op2: "Kalibanga", Op3: "Ropar", Op4: "Dhaulavira", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2}
+	// q7 := Question{Question: "Which site of Harappan civilization is located in Haryana?", Type: "scq", Op1: "Banawali", Op2: "Kalibanga", Op3: "Ropar", Op4: "Dhaulavira", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2}
 	// db.Create(&q7)
-	// q8 := Question{Question: "Which of these were rulers of the maurya dynasty?", Op1: "ChandraGupta Maurya", Op2: "Bindusara", Op3: "Ashoka", Op4: "RudraGupta", Ans1: true, Ans2: true, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 2}
+	// q8 := Question{Question: "Which of these were rulers of the maurya dynasty?", Type: "mcq", Op1: "ChandraGupta Maurya", Op2: "Bindusara", Op3: "Ashoka", Op4: "RudraGupta", Ans1: true, Ans2: true, Ans3: true, Ans4: false, Genre: "History", Quiz_Num: 2}
 	// db.Create(&q8)
-	// q9 := Question{Question: "Alexander the Great was from which country?", Op1: "Turkey", Op2: "Macedonia", Op3: "Greece", Op4: "Morocco", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2}
+	// q9 := Question{Question: "Alexander the Great was from which country?", Type: "scq", Op1: "Turkey", Op2: "Macedonia", Op3: "Greece", Op4: "Morocco", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2}
 	// db.Create(&q9)
-	// q10 := Question{Question: "Who was the founder of Lodhi dynasty?", Op1: "Sikandar Lodhi", Op2: "Bahlol Lodhi", Op3: "Ibrahim Lodhi", Op4: "Daulat Khan Lodhi", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2}
+	// q10 := Question{Question: "Who was the founder of Lodhi dynasty?", Type: "scq", Op1: "Sikandar Lodhi", Op2: "Bahlol Lodhi", Op3: "Ibrahim Lodhi", Op4: "Daulat Khan Lodhi", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "History", Quiz_Num: 2}
 	// db.Create(&q10)
 
-	// q11 := Question{Question: "Which of the following is not a primary contributor to the green house effect ? ", Op1: "Carbon Dioxide", Op2: "Carbon monoxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1}
+	// q11 := Question{Question: "Which of the following is not a primary contributor to the green house effect ? ", Type: "scq", Op1: "Carbon Dioxide", Op2: "Carbon monoxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1}
 	// db.Create(&q11)
-	// q12 := Question{Question: "The depletion in the Ozone layer is caused by", Op1: "Nitrous oxide", Op2: "Carbon Dioxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1}
+	// q12 := Question{Question: "The depletion in the Ozone layer is caused by", Type: "scq", Op1: "Nitrous oxide", Op2: "Carbon Dioxide", Op3: "CFCs", Op4: "Methane", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 1}
 	// db.Create(&q12)
-	// q13 := Question{Question: "Photovoltaic cell is related to?", Op1: "Geothermal energy", Op2: "Wind energy", Op3: "Nucear energy", Op4: "Solar energy", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1}
+	// q13 := Question{Question: "Photovoltaic cell is related to?", Type: "scq", Op1: "Geothermal energy", Op2: "Wind energy", Op3: "Nucear energy", Op4: "Solar energy", Ans1: false, Ans2: false, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1}
 	// db.Create(&q13)
-	// q14 := Question{Question: "Which of the following problems is created by noise pollution?", Op1: "Diarrhoea", Op2: "Hypertension", Op3: "Deafness", Op4: "Irritation", Ans1: false, Ans2: true, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 1}
+	// q14 := Question{Question: "Which of the following problems is created by noise pollution?", Type: "mcq", Op1: "Diarrhoea", Op2: "Hypertension", Op3: "Deafness", Op4: "Irritation", Ans1: false, Ans2: true, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 1}
 	// db.Create(&q14)
-	// q15 := Question{Question: "Which of these conduct electricity?", Op1: "Gold", Op2: "Graphite", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1}
+	// q15 := Question{Question: "Which of these conduct electricity?", Type: "mcq", Op1: "Gold", Op2: "Graphite", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 1}
 	// db.Create(&q15)
 
-	// q16 := Question{Question: "The age of tree, in years, can be ascertained by", Op1: "weight", Op2: "height", Op3: "annular rings", Op4: "root", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 2}
+	// q16 := Question{Question: "The age of tree, in years, can be ascertained by", Type: "scq", Op1: "weight", Op2: "height", Op3: "annular rings", Op4: "root", Ans1: false, Ans2: false, Ans3: true, Ans4: false, Genre: "Science", Quiz_Num: 2}
 	// db.Create(&q16)
-	// q17 := Question{Question: "Air is composed of", Op1: "gases", Op2: "water vapours", Op3: "light", Op4: "dust particles", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 2}
+	// q17 := Question{Question: "Air is composed of", Type: "mcq", Op1: "gases", Op2: "water vapours", Op3: "light", Op4: "dust particles", Ans1: true, Ans2: true, Ans3: false, Ans4: true, Genre: "Science", Quiz_Num: 2}
 	// db.Create(&q17)
-	// q18 := Question{Question: "Fans, bulbs and tubes etc. in houses are fitted in", Op1: "Series", Op2: "Parallel", Op3: "Mixed", Op4: "Random", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2}
+	// q18 := Question{Question: "Fans, bulbs and tubes etc. in houses are fitted in", Type: "scq", Op1: "Series", Op2: "Parallel", Op3: "Mixed", Op4: "Random", Ans1: false, Ans2: true, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2}
 	// db.Create(&q18)
-	// q19 := Question{Question: "The best conductor of electricity", Op1: "Gold", Op2: "Silver", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2}
+	// q19 := Question{Question: "The best conductor of electricity", Type: "scq", Op1: "Gold", Op2: "Silver", Op3: "Mica", Op4: "Copper", Ans1: true, Ans2: false, Ans3: false, Ans4: false, Genre: "Science", Quiz_Num: 2}
 	// db.Create(&q19)
-	// q20 := Question{Question: "Which of the following is in liquid form at room temperature?", Op1: "Lithium", Op2: "Hydrogen", Op3: "Francium", Op4: "Gallium", Ans1: false, Ans2: false, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 2}
+	// q20 := Question{Question: "Which of the following is in liquid form at room temperature?", Type: "mcq", Op1: "Lithium", Op2: "Hydrogen", Op3: "Francium", Op4: "Gallium", Ans1: false, Ans2: false, Ans3: true, Ans4: true, Genre: "Science", Quiz_Num: 2}
 	// db.Create(&q20)
 
 	r := gin.Default()
@@ -356,7 +357,6 @@ func CreateQuestion(c *gin.Context) {
 		var question Question
 		c.BindJSON(&question)
 		db.Create(&question)
-		fmt.Println(question)
 
 		var quiz Quiz
 		db.Where("Genre = ?", question.Genre).Where("Quiz_Num = ?", question.Quiz_Num).First(&quiz)
@@ -463,7 +463,6 @@ func GetNumQuizzes(c *gin.Context) {
 		c.AbortWithStatus(404)
 		fmt.Println(err)
 	} else {
-		fmt.Println(quizzes.Num_Quizzes)
 		c.Header("access-control-allow-origin", "*")
 		c.JSON(200, quizzes)
 	}

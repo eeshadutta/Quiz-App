@@ -32,6 +32,7 @@ class ViewQuizAdmin extends Component {
             if (this.state.data[item].ans4 == true)
                 ans += "d"
             html.push(<div><h3>{parseInt(item) + 1}) {this.state.data[item].question}</h3>
+                <span className="badge badge-default">{this.state.data[item].type}</span>
                 <h4>a) {this.state.data[item].op1}</h4>
                 <h4>b) {this.state.data[item].op2}</h4>
                 <h4>c) {this.state.data[item].op3}</h4>

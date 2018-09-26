@@ -17,6 +17,7 @@ class CreateQuizQuestions extends Component {
                 ans4: false,
                 genre: "",
                 quiz_num: "",
+                type: "",
             },
             marked_ans: [],
             addNew: false,
@@ -28,6 +29,7 @@ class CreateQuizQuestions extends Component {
         this.handleCChange = this.handleCChange.bind(this)
         this.handleDChange = this.handleDChange.bind(this)
         this.handleQChange = this.handleQChange.bind(this)
+        this.handleTChange = this.handleTChange.bind(this)
         this.createQuestion = this.createQuestion.bind(this)
         this.addNewQuestion = this.addNewQuestion.bind(this)
         this.handleCheckboxSelection = this.handleCheckboxSelection.bind(this)
@@ -54,9 +56,12 @@ class CreateQuizQuestions extends Component {
         this.state.formData.question = event.target.value
     }
 
+    handleTChange(event) {
+        this.state.formData.type = event.target.value
+    }
+
     handleCheckboxSelection(event) {
         this.state.marked_ans[parseInt(event.target.name)] = event.target.checked;
-        console.log(this.state.marked_ans)
     }
 
     createQuestion(event) {
@@ -115,6 +120,10 @@ class CreateQuizQuestions extends Component {
                                     <h3>Question:</h3>
                                     <input type="text" className="form-control" value={this.state.question} onChange={this.handleQChange} />
                                 </div><br></br><br></br>
+                                <div className="form-group">
+                                    <h3>Type:</h3><h5>"scq" for single correct and "mcq" for multiple correct</h5>
+                                    <input type="text" className="form-control" value={this.state.type} onChange={this.handleTChange} />
+                                </div><br></br><br></br>
                                 <h4>Options: </h4>
                                 <div className="form-group">
                                     <div className="row">
@@ -157,8 +166,7 @@ class CreateQuizQuestions extends Component {
                     </div>
                     <div className="col-md-3"></div>
                 </div>
-
-            </div >
+            </div>
         );
     }
 }

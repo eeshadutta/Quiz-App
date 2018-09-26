@@ -36,7 +36,6 @@ class Play extends Component {
                     <tbody>{this.state.data.map(function (item, key) {
                         return (
                             <tr key={key}>
-                                {/* <td><input type="radio" value={item.id} checked={this.state.selectedOption == item.id} onChange={this.handleOptionChange}></input></td> */}
                                 <td>{item.genre}</td>
                                 <td>{item.quiz_num}</td>
                                 <td>{item.num_questions}</td>

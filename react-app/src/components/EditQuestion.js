@@ -20,9 +20,8 @@ class EditQuestion extends Component {
                 ans4: false,
                 genre: "",
                 quiz_num: 0,
+                type: "",
             },
-            //setMessage: false,
-            //message: "",
             addNew: false,
             ans: "",
         }
@@ -31,6 +30,7 @@ class EditQuestion extends Component {
         this.handleCChange = this.handleCChange.bind(this)
         this.handleDChange = this.handleDChange.bind(this)
         this.handleQChange = this.handleQChange.bind(this)
+        this.handleTChange = this.handleTChange.bind(this)
         this.handleCheckboxSelection = this.handleCheckboxSelection.bind(this)
         this.editQuestion = this.editQuestion.bind(this)
         this.handleDone = this.handleDone.bind(this)
@@ -47,10 +47,6 @@ class EditQuestion extends Component {
         this.state.formData.op2 = this.state.data.op2
         this.state.formData.op3 = this.state.data.op3
         this.state.formData.op4 = this.state.data.op4
-        // this.state.formData.ans1 = this.state.data.ans1
-        // this.state.formData.ans2 = this.state.data.ans2
-        // this.state.formData.ans3 = this.state.data.ans3
-        // this.state.formData.ans4 = this.state.data.ans4
         this.state.formData.genre = this.state.data.genre
         this.state.formData.quiz_num = this.state.data.quiz_num
         console.log(this.state.ans);
@@ -74,6 +70,10 @@ class EditQuestion extends Component {
 
     handleQChange(event) {
         this.state.formData.question = event.target.value
+    }
+
+    handleTChange(event) {
+        this.state.formData.type = event.target.value
     }
 
     handleCheckboxSelection(event) {
@@ -102,10 +102,11 @@ class EditQuestion extends Component {
             this.state.formData.ans3 = this.state.data.ans3
             this.state.formData.ans4 = this.state.data.ans4
         }
-        if (this.state.formData.op1 == "") this.state.formData.op1 = this.state.data.op1
-        if (this.state.formData.op2 == "") this.state.formData.op2 = this.state.data.op2
-        if (this.state.formData.op3 == "") this.state.formData.op3 = this.state.data.op3
-        if (this.state.formData.op4 == "") this.state.formData.op4 = this.state.data.op4
+        if (this.state.formData.type == "") this.state.formData.type = this.state.data.type;
+        if (this.state.formData.op1 == "") this.state.formData.op1 = this.state.data.op1;
+        if (this.state.formData.op2 == "") this.state.formData.op2 = this.state.data.op2;
+        if (this.state.formData.op3 == "") this.state.formData.op3 = this.state.data.op3;
+        if (this.state.formData.op4 == "") this.state.formData.op4 = this.state.data.op4;
 
         console.log(this.state.formData)
         fetch('http://127.0.0.1:8080/question/' + this.props.match.params.id, {
@@ -136,6 +137,7 @@ class EditQuestion extends Component {
                 <div>
                     <h3>Original Question</h3>
                     <h4>{this.state.data.question}</h4>
+                    <span className="badge badge-info">{this.state.data.type}</span>                    
                     <h5>a) {this.state.data.op1}</h5>
                     <h5>b) {this.state.data.op2}</h5>
                     <h5>c) {this.state.data.op3}</h5>
@@ -150,6 +152,11 @@ class EditQuestion extends Component {
                                 <div className="form-group">
                                     <h4>Question:</h4>
                                     <input type="text" className="form-control" value={this.state.question} onChange={this.handleQChange} />
+                                </div>
+                                <div className="form-group">
+                                    <h4>Type:</h4>
+                                    <h5>"scq" for single correct and "mcq" for multiple correct</h5>
+                                    <input type="text" className="form-control" value={this.state.type} onChange={this.handleTChange} />
                                 </div>
                                 <h5>Options: </h5>
                                 <h5>(Please check all those boxes which are correct answer)</h5>

@@ -40,11 +40,10 @@ class ShowQuiz extends Component {
             this.state.correct_ans[j++] = this.state.data[i].ans3;
             this.state.correct_ans[j++] = this.state.data[i].ans4;
         }
-        console.log(this.state.marked_ans);
-        console.log(this.state.correct_ans);
         i = 0;
         for (var item in this.state.data) {
             html.push(<div><h4>{parseInt(item) + 1}) {this.state.data[item].question}</h4>
+                <span className="badge badge-info">{this.state.data[item].type}</span>
                 <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />a) {this.state.data[item].op1}</label></div>
                 <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />b) {this.state.data[item].op2}</label></div>
                 <div className="checkbox"><label><input type="checkbox" name={i++} onChange={this.handleCheckboxSelection} />c) {this.state.data[item].op3}</label></div>
@@ -56,7 +55,6 @@ class ShowQuiz extends Component {
 
     handleCheckboxSelection(event) {
         this.state.marked_ans[event.target.name] = event.target.checked;
-        console.log(this.state.marked_ans)
     }
 
     handleQuizSubmit() {
